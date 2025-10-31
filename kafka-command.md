@@ -15,6 +15,16 @@ java -jar "C:\kafdrop-4.2.0.jar" --kafka.brokerConnect=localhost:9092
 ### TOPICS
 #### Creating a topic
 %KAFKA_HOME%/bin/windows/kafka-topics.bat --bootstrap-server localhost:9092 --create --partitions 3 --replication-factor 1  --topic getting-started
+#### Gán cấu hình flush.messages=100 chỉ cho topic này.
+kafka-configs.bat --zookeeper localhost:2181 --entity-type topics --entity-name test.topic.config --alter --add-config flush.messages=100
+#### Xem lại cấu hình topic
+kafka-configs.bat --zookeeper localhost:2181 --entity-type topics --entity-name test.topic.config --describe
+#### Xem cấu hình mặc định của tất cả topics
+kafka-configs.bat --zookeeper localhost:2181 --entity-type topics --entity-default --describe
+#### Thay đổi cluster-wide topic default
+kafka-configs.bat --zookeeper localhost:2181 --entity-type topics --entity-default --alter --add-config flush.messages=100
+#### Xóa cấu hình override của topic
+kafka-configs.bat --zookeeper localhost:2181 --entity-type topics --entity-name test.topic.config --alter --delete-config flush.messages
 #### Listing topics
 %KAFKA_HOME%/bin/windows/kafka-topics.bat --bootstrap-server localhost:9092 --list --exclude-internal
 #### Describing a topic
@@ -52,4 +62,13 @@ java -jar "C:\kafdrop-4.2.0.jar" --kafka.brokerConnect=localhost:9092
 %KAFKA_HOME%\bin\windows\kafka-consumer-groups.bat --bootstrap-server localhost:9092 --topic getting-started:0,1 --group cli-consumer --reset-offsets --to-offset 2 --execute
 #### Deleting offsets
 %KAFKA_HOME%\bin\windows\kafka-consumer-groups.bat --bootstrap-server localhost:9092 --topic getting-started --group cli-consumer --delete-offsets
+
+### DYNAMIC Configuration
+#### change num.io.threads depends on the --entity-type this will set to that specified entity
+<span style="color:blue">kafka-configs.bat --bootstrap-server localhost:9092 --entity-type brokers --entity-name 0 --describe num.io.threads</span>
+#### get num.io.threads for dynamic configuration (static config are not shown if they are overriden by dynamic configuration)
+kafka-configs.bat --bootstrap-server localhost:9092 --entity-type brokers --entity-name 0 --describe num.io.threads
+--> Configs for broker 0 are:
+
+
 
